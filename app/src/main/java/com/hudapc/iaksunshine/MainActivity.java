@@ -5,8 +5,6 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
-import com.hudapc.iaksunshine.adapter.RVForeCast;
-
 // TODO 3 Layout Item
 // menggunakan layout untuk satu row data
 //
@@ -93,8 +91,6 @@ public class MainActivity extends AppCompatActivity
 // TODO 5 Awal Uji Coba RecyclerView dengan Adapter
 // - buat member objek untuk widget RecyclerView dengan nama __wrv__.
 // - buat member objek untuk adapter dari class __namaclassRV__ dengan nama __adapterrv__.
-    RecyclerView mRvForecast;
-    RVForeCast mAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -120,11 +116,5 @@ public class MainActivity extends AppCompatActivity
 //     return 15;
 //
 // sampai saat ini aplikasi sudah bisa di-run. terbaik...
-
-        mRvForecast = findViewById(R.id.rv_forecast);
-        mAdapter = new RVForeCast();
-
-        mRvForecast.setLayoutManager(new LinearLayoutManager(this.getApplicationContext()));
-        mRvForecast.setAdapter(mAdapter);
     }
 }
