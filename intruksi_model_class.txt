@@ -1,0 +1,129 @@
+pada aplikasi ini kita akan memberikan perkiraan cuaca selama 16 hari 
+(hari ini dan 15 hari kedepan). openweathermap.org sudah menyediakan API itu, 
+untuk lebih detailnya bisa dilihat pada https://openweathermap.org/forecast16. 
+lihat di bagian JSON, di bagian ini terdapat parameter data JSON untuk mengambil 
+nilai dari variabel yang diinginkan.
+
+{
+    "cod":"200",
+    "message":0.0032,
+    "city":
+    {
+        "id":1851632,
+        "name":"Shuzenji",
+        "coord":
+        {
+            "lon":138.933334,
+            "lat":34.966671
+        },
+        "country":"JP"
+    },
+    "cnt":10,
+    "list":
+    [
+        {
+            "dt":1406080800,
+            "temp":
+            {
+                "day":297.77,
+                "min":293.52,
+                "max":297.77,
+                "night":293.52,
+                "eve":297.77,
+                "morn":297.77
+            },
+            "pressure":925.04,
+            "humidity":76,
+            "weather":  
+            [
+                {
+                    "id":803,
+                    "main":"Clouds",
+                    "description":"broken clouds",
+                    "icon":"04d"
+                }
+            ],
+        }
+    ]
+}
+
+Objek JSON yang dihasilkan oleh API itu memiliki varaibel
+- cod dengan tipe data string
+- message dengan tipe data float
+- city dengan tipe data berisi objek
+- cnt dengan tipe data int
+- list dengan tipe data array, di dalamnya terdpat kumpulan objek yang sejenis
+  sebanyak jumlah yang ada di dalam variabel cnt.
+
+///////////////MODEL Class City/////////////////
+Objek yang ada di dalam variabel city memiliki variabel
+- id dengan tipe data int
+- name dengan tipe data string
+- coord dengan tipe data berisi objek
+- country dengan tipe data string
+
+///////////////MODEL Class Coord/////////////////
+Objek yang ada di dalam variabel coord memiliki variabel
+- lon dengan tipe data double
+- lat dengan tipe data double
+
+///////////////MODEL Class Coord buat/////////////////
+maka sekarang kita buat Model class Coord pada package model dengan member 
+sesuai dengan apa yang ada di MODEL Class Coord
+  public class Coord
+
+///////////////MODEL Class City buat/////////////////
+maka sekarang kita buat Model class City pada package model dengan member 
+sesuai dengan apa yang ada di MODEL Class City. untuk variabel coord berikan 
+objek Coord
+  public class City
+
+///////////////MODEL Class ForeCast/////////////////
+variabel list merupakan array yang diisi objek. objek itu berkaitan dengan ramalan cuaca.
+objek itu memiliki variabel
+- dt dengan tipe data long (variabel ini merupakan bentuk unix time dari tipe data date)
+- temp dengan tipe data berisi objek
+- pressure dengan tipe data float
+- humidity dengan tipe data int
+- weather dengan tipe data array. di dalamnya berisi kumpulan objek yang sejenis
+
+///////////////MODEL Class Weather/////////////////
+varaibel weather memiliki tipe data array yang diisi objek. objek itu berkaitan dengan detail cuaca.
+objek itu memiliki variabel
+- id dengan tipe data int
+- main dengan tipe data string
+- description dengan tipe data string
+- icon dengan tipe data string
+
+///////////////MODEL Class Weather buat/////////////////
+maka sekarang kita buat Model class Weather pada package model dengan member 
+sesuai dengan apa yang ada di MODEL Class Weather.
+  public class Weather
+
+///////////////MODEL Class Temperature/////////////////
+Objek yang ada di dalam variabel temp memiliki variabel
+- day dengantipe data float
+- min dengantipe data float
+- max dengantipe data float
+- night dengantipe data float
+- eve dengantipe data float
+- morning dengantipe data float
+
+///////////////MODEL Class Temperature buat/////////////////
+maka sekarang kita buat Model class Temperature pada package model dengan member 
+sesuai dengan apa yang ada di MODEL Class Temperature.
+  public class Temperature
+
+///////////////MODEL Class ForeCast buat/////////////////
+maka sekarang kita buat Model class ForeCast pada package model dengan member 
+sesuai dengan apa yang ada di MODEL Class ForeCast. untuk variabel temp berikan objek 
+Temperature. untuk variabel weather berikan objek List berupa ArrayList dengan menyimpan 
+kumpulan objek Weather.
+  public class ForeCast
+
+///////////////MODEL Class ResponseAPIDaily/////////////////
+maka sekarang kita buat Model class ResponseAPIDaily pada package model dengan member 
+sesuai dengan apa yang ada pada teks JSON yang ada. untuk variabel city berikan objek 
+City. untuk variabel list berikan objek List berupa ArrayList dengan menyimpan 
+kumpulan objek ForeCast.
+  public class ResponseAPIDaily

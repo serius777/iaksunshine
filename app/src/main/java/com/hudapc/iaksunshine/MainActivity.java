@@ -86,11 +86,98 @@ import android.support.v7.widget.RecyclerView;
 //
 //         return __holderrow__;
 
+/** TODO 7 Mendapatkan API KEY
+ * - dapatkan API KEY dari https://openweathermap.org
+ * - jika belum punya akun daftar terlebih dahulu.
+ * - keterangan lebih lanjut untuk mendapatkan API KEY lihat https://openweathermap.org/appid#get
+ * - setelah dapat API KEY lakukan tes dengan url ini
+ *     http://api.openweathermap.org/data/2.5/forecast/daily?id=524901&cnt=16&appid=__APIKEY__&units=metric
+ *   jika berhasil, akan terlihat text dengan format json
+ */
+
+/** TODO 8 Membuat Model class
+ * data yang kita ambil dari openweathermap.org berupa text dengan format json.
+ * teks dengan format json mudah untuk kelola (ubah dan tulis nilai).
+ * - buat package model untuk menyimpan seluruh model class yang diperlukan aplikasi.
+ * - buat model class sesuai dengan berkas instruksi yang ada di dalam projek ini.
+ */
+
+/** TODO 9 List Untuk Adapter
+ * - buka class adapter __namaclassRV__
+ * - tambahkan member objek List untuk menyimpan objek ForeCast dengan
+ *   nama __listForeCastAdapter__
+ *
+ *     List<ForeCast> __listForeCastAdapter__;
+ *
+ */
+
+/** TODO 10 Konstruktor dan ArrayList
+ * - buat constructor untuk class __namaclassRV__ dengan parameter objek ArrayList
+ *   untuk menyimpan objek ForeCast
+ *
+ *     public __namaclassRV__(ArrayList<ForeCast> list)
+ *
+ * - dalam badan constructor inisialisasi member objek List __listForeCastAdapter__
+ *   dengan data dari parameter constructor.
+ *
+ *     __listForeCastAdapter__ = list;
+ *
+ * akan ada error pada MainActivity, biarkan dulu.
+ */
+
+/** TODO 11 Inisialisasi Widget Dalam ViewHolder
+ * - buat member untuk menyimpan widget dalam class ViewHolder  __namaclassVH__
+ *   (ingat _TODO 3)
+ * - inisialisasi setiap member widget sesuai dengan id yang ditulis dalam layout xml.
+ *   setelah
+ *
+ *     super(__view__);
+ *
+ *    mulai inisialisasi semua widget.
+ *
+ *      member_widget = (__classview__) __view__.findViewById(R.id.__idwidget__);
+ *
+ */
+
+/** TODO 12 Method Bind
+ * - di dalam class __namaclassVH__ buat method public void bind dengn parameter objek ForeCast
+ *
+ *     public void bind(ForeCast item)
+ *
+ * - coba set salah satu member widget yang ada dari parameter yang dimasukkan. contoh set widget maximum
+ *   dan minimum temperatur. dalam badan method bind tulis
+ *
+ *      __widgetMaxTemperature__.setText(String.valueOf(item.temp.max));
+ *      __widgetMinTemperature__.setText(String.valueOf(item.temp.min));
+ *
+ * - dalam class __namaclassRV__ edit method onBindViewHolder. dalam bada method itu lakukan
+ *     @ ambil objek ForeCast yang ada dalam member __listForeCastAdapter__ sesuai dengan posisi dari
+ *       parameter position
+ *
+ *         ForeCast item = __listForeCastAdapter__.get(position);
+ *
+ *     @ panggil method bind dari ViewHolder (__namaclassVH__) dari parameter  holder. masukkan objek
+ *       ForeCast (item) yang sudah diambil tadi ke dalam fungsi bind.
+ *
+ *         holder.bind(item);
+ *
+ * - dalam class __namaclassRV__ edit method getItemCount. ubah nilai return sesuai dengan jumlah
+ *   data yang ada dalam member __listForeCastAdapter__.
+ *
+ *     return __listForeCastAdapter__.size();
+ */
+
 public class MainActivity extends AppCompatActivity
 {
 // TODO 5 Awal Uji Coba RecyclerView dengan Adapter
 // - buat member objek untuk widget RecyclerView dengan nama __wrv__.
 // - buat member objek untuk adapter dari class __namaclassRV__ dengan nama __adapterrv__.
+
+/** TODO 13 ArrayList Untuk Adapter
+ * - inisialsisaikan objek ArrayList untuk menyimpan objek ForeCast
+ *
+ *     ArrayList<ForeCast> __listForeCastAct__;
+ */
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -116,5 +203,72 @@ public class MainActivity extends AppCompatActivity
 //     return 15;
 //
 // sampai saat ini aplikasi sudah bisa di-run. terbaik...
+
+/** TODO 14 inisialisasi ArrayList dan memperbaiki yang error
+ * - sebelum inisialisasi objek adapater (__adapterrv__), inisialisasi objek ArrayList yang sudah
+ *   dibuat tadi
+ *
+ *     __listForeCastAct__ = new ArrayList<>();
+ *
+ * - masukkan objek __listForeCastAct__ ke dalam inisialisasi objek __adapterrv__.
+ *
+ *     __adapterrv__ = __namaclassRV__(__listForeCastAct__);
+ */
+    }
+
+/** TODO 16 fungsi mengambil data dari API
+ *  - tulis fungsi ini
+ *  - edit sesuaikan kepunyaan anda
+ *  - panggil fungsi ini dari method onCreate, paling bawah
+ */
+
+    private void getdataFromAPI()
+    {
+        final String url = "http://api.openweathermap.org/data/2.5/forecast/daily?" +
+                "q=__tulis kota yang ingin dicek cuacanya (Huruf kapital diawal kata)__" +
+                "&cnt=16" +
+                "&appid=__API KEY anda__" +
+                "&units=metric";
+        RequestQueue request = Volley.newRequestQueue(this);
+
+        StringRequest stringRequest = new StringRequest(Request.Method.GET,
+                url,
+                new Response.Listener<String>()
+                {
+                    @Override
+                    public void onResponse(String response)
+                    {
+                        Log.d("MainActivity", "onResponse: "+ response);
+                        try
+                        {
+                            ResponseAPIDaily dailyForecast = new Gson().fromJson(response,  ResponseAPIDaily.class);
+                            //Log.d(TAG, dailyForecast.toString());
+                            mData.addAll(dailyForecast.list);
+                            mAdapter.notifyDataSetChanged();
+                        }
+                        catch (JsonSyntaxException e)
+                        {
+                            Log.d("MainActivity", e.getMessage());
+                        }
+                    }
+                },
+                new Response.ErrorListener()
+                {
+                    @Override
+                    public void onErrorResponse(VolleyError error)
+                    {
+                        if(error != null)
+                        {
+                            Log.e("MainActivity",error.getMessage());
+                        }
+                        else
+                        {
+                            Log.e("MainActivity","something error happnened");
+                        }
+                    }
+                }
+        );
+
+        request.add(stringRequest);
     }
 }
