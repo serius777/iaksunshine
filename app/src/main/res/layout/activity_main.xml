@@ -1,24 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
+<layout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context="com.hudapc.iaksunshine.MainActivity">
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <!--
-        TODO 2 Recycler View
-        buat widget RecyclerView
-        - berikan id
-        - atur agar width dan height memenuhi layar
-
-        sampai di sini aplikasi bisa di-run.
-    -->
-
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/rv_forecast"
+    <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent"
+        tools:context="com.hudapc.iaksunshine.MainActivity">
 
-</android.support.constraint.ConstraintLayout>
+        <!--
+            TODO 2 Recycler View
+            buat widget RecyclerView
+            - berikan id
+            - atur agar width dan height memenuhi layar
+
+            sampai di sini aplikasi bisa di-run.
+        -->
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rv_forecast"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+        </android.support.v7.widget.RecyclerView>
+
+    </android.support.constraint.ConstraintLayout>
+
+</layout>

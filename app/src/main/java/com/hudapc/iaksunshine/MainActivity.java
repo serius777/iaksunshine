@@ -1,9 +1,32 @@
 package com.hudapc.iaksunshine;
 
+import android.content.Intent;
+import android.databinding.DataBindingUtil;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
+import android.widget.Toast;
+
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
+import com.hudapc.iaksunshine.adapter.RVForeCast;
+import com.hudapc.iaksunshine.databinding.ActivityMainBinding;
+import com.hudapc.iaksunshine.model.DummyForeCast;
+import com.hudapc.iaksunshine.model.ForeCast;
+import com.hudapc.iaksunshine.model.RequestDailyForeCast;
+import com.hudapc.iaksunshine.model.Weather;
+
+import java.util.ArrayList;
+//import android.support.v7.widget.LinearLayoutManager;
+//import android.support.v7.widget.RecyclerView;
 
 // TODO 3 Layout Item
 // menggunakan layout untuk satu row data
@@ -168,22 +191,30 @@ import android.support.v7.widget.RecyclerView;
  */
 
 public class MainActivity extends AppCompatActivity
+    implements RVForeCast.OnClickForeCast
 {
 // TODO 5 Awal Uji Coba RecyclerView dengan Adapter
 // - buat member objek untuk widget RecyclerView dengan nama __wrv__.
 // - buat member objek untuk adapter dari class __namaclassRV__ dengan nama __adapterrv__.
+    ActivityMainBinding binding;
+    //RecyclerView mRvForeCast;
+    RVForeCast mAdapter;
+
+    ArrayList<DummyForeCast> mData;
 
 /** TODO 13 ArrayList Untuk Adapter
  * - inisialsisaikan objek ArrayList untuk menyimpan objek ForeCast
  *
  *     ArrayList<ForeCast> __listForeCastAct__;
  */
+    ArrayList<ForeCast> mDataForeCast;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        //setContentView(R.layout.activity_main);
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
 
 // TODO 6 Uji Coba RecyclerView dengan Adapter
 // - inisialsisasi objek __wrv__ dengan RecyclerView yang ada di layout activity ini.
@@ -203,6 +234,17 @@ public class MainActivity extends AppCompatActivity
 //     return 15;
 //
 // sampai saat ini aplikasi sudah bisa di-run. terbaik...
+        mDataForeCast = new ArrayList<>();
+
+        //mRvForeCast = (RecyclerView) findViewById(R.id.rv_forecast);
+        mAdapter = new RVForeCast(mDataForeCast);
+        //mRvForeCast.setLayoutManager(new LinearLayoutManager(this.getBaseContext()));
+        binding.rvForecast.setLayoutManager(new LinearLayoutManager(this.getBaseContext()));
+        binding.rvForecast.setAdapter(mAdapter);
+        mAdapter.setListener(this);
+
+        //populateDummyData();
+        getdataFromAPI();
 
 /** TODO 14 inisialisasi ArrayList dan memperbaiki yang error
  * - sebelum inisialisasi objek adapater (__adapterrv__), inisialisasi objek ArrayList yang sudah
@@ -216,6 +258,37 @@ public class MainActivity extends AppCompatActivity
  */
     }
 
+    @Override
+    public void onClick(ForeCast item)
+    {
+        Weather itemWeather = item.getWeather().get(0);
+        Toast.makeText(
+                    this,
+                    itemWeather.getDescription(),
+                    Toast.LENGTH_LONG)
+                .show();
+        Intent intent = new Intent(this, DetailActivity.class);
+        //intent.putExtra("min", item.getTemp().getMin());
+        String jsonForeCast = new Gson().toJson(item);
+        intent.putExtra("json_forecast", jsonForeCast);
+        startActivity(intent);
+    }
+
+    private void populateDummyData()
+    {
+        for(int i = 0; i < 20; i++)
+        {
+            DummyForeCast tmp = new DummyForeCast();
+            tmp.setDay("Senin");
+            tmp.setWeather("gerimis");
+            tmp.setMax(i);
+            tmp.setMin(i);
+
+            mData.add(tmp);
+        }
+        mAdapter.notifyDataSetChanged();
+    }
+
 /** TODO 16 fungsi mengambil data dari API
  *  - tulis fungsi ini
  *  - edit sesuaikan kepunyaan anda
@@ -224,11 +297,12 @@ public class MainActivity extends AppCompatActivity
 
     private void getdataFromAPI()
     {
+        final String sampleUrl = "https://samples.openweathermap.org/data/2.5/forecast/daily?id=524901&lang=zh_cn&appid=b1b15e88fa797225412429c1c50c122a1";
         final String url = "http://api.openweathermap.org/data/2.5/forecast/daily?" +
-                "q=__tulis kota yang ingin dicek cuacanya (Huruf kapital diawal kata)__" +
-                "&cnt=16" +
-                "&appid=__API KEY anda__" +
-                "&units=metric";
+                "id=524901&" +
+                "cnt=16&" +
+                "appid=4a00a3f448b218cea14962fc960351a1&"+
+                "units=metric";
         RequestQueue request = Volley.newRequestQueue(this);
 
         StringRequest stringRequest = new StringRequest(Request.Method.GET,
@@ -238,17 +312,18 @@ public class MainActivity extends AppCompatActivity
                     @Override
                     public void onResponse(String response)
                     {
-                        Log.d("MainActivity", "onResponse: "+ response);
+                        //Log.d("MainActivity", "onResponse: "+ response);
                         try
                         {
-                            ResponseAPIDaily dailyForecast = new Gson().fromJson(response,  ResponseAPIDaily.class);
+                            RequestDailyForeCast dailyForecast = new Gson().fromJson(response,  RequestDailyForeCast.class);
                             //Log.d(TAG, dailyForecast.toString());
-                            mData.addAll(dailyForecast.list);
+                            mDataForeCast.addAll(dailyForecast.getList());
                             mAdapter.notifyDataSetChanged();
                         }
                         catch (JsonSyntaxException e)
                         {
                             Log.d("MainActivity", e.getMessage());
+                            Toast.makeText(MainActivity.this, e.getMessage(), Toast.LENGTH_LONG).show();
                         }
                     }
                 },
@@ -259,7 +334,7 @@ public class MainActivity extends AppCompatActivity
                     {
                         if(error != null)
                         {
-                            Log.e("MainActivity",error.getMessage());
+                            Log.e("MainActivity",error.networkResponse.data.toString());
                         }
                         else
                         {
